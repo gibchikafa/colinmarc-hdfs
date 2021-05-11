@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"io/ioutil"
@@ -17,11 +16,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/colinmarc/hdfs/v2/hadoopconf"
-	hadoop "github.com/colinmarc/hdfs/v2/internal/protocol/hadoop_common"
-	hdfs "github.com/colinmarc/hdfs/v2/internal/protocol/hadoop_hdfs"
-	"github.com/colinmarc/hdfs/v2/internal/rpc"
-	"github.com/colinmarc/hdfs/v2/internal/transfer"
+	"github.com/colinmarc/hdfs/hadoopconf"
+	hadoop "github.com/colinmarc/hdfs/protocol/hadoop_common"
+	hdfs "github.com/colinmarc/hdfs/protocol/hadoop_hdfs"
+	"github.com/colinmarc/hdfs/rpc"
+	"github.com/colinmarc/hdfs/transfer"
 	krb "github.com/jcmturner/gokrb5/v8/client"
 )
 
