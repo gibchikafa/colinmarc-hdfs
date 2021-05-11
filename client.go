@@ -373,21 +373,18 @@ func (c *Client) Close() error {
 }
 
 func dialFunction(ctx context.Context, network, address string) (net.Conn, error) {
-	certDir := "/srv/hops/super_crypto/hdfs/"
-	caCert := "hops_ca_bundle.pem"
-	clientCertificate := "hdfs_certificate_bundle.pem"
-	clientKey := "hdfs_priv.pem"
+	caCert := os.Getenv("ROOT_CA_BUNDLE")
+	clientCertificate := os.Getenv("CLIENT_CERTIFICATES_BUNDLE")
+	clientKey := os.Getenv("CLIENT_KEY")
 
 	// Load client's certificate(including the intermediate) and private key
-	clientCert, err := tls.LoadX509KeyPair(certDir + clientCertificate, certDir + clientKey)
+	clientCert, err := tls.LoadX509KeyPair(clientCertificate, clientKey)
 	if err != nil {
 		return nil, err
 	}
 
-	serverName := "10.0.2.15"
-
 	// Load certificate of the CA who signed server's certificate
-	pemServerCA, err := ioutil.ReadFile(certDir + caCert)
+	pemServerCA, err := ioutil.ReadFile(caCert)
 	if err != nil {
 		return nil, err
 	}
@@ -405,7 +402,6 @@ func dialFunction(ctx context.Context, network, address string) (net.Conn, error
 		config.RootCAs.AddCert(x509Cert)
 	}
 
-	config.ServerName = serverName
 	config.Certificates  = []tls.Certificate{clientCert}
 	config.InsecureSkipVerify = true
 
@@ -417,8 +413,6 @@ func dialFunction(ctx context.Context, network, address string) (net.Conn, error
 
 		for i, asn1Data := range rawCerts {
 			cert, err := x509.ParseCertificate(asn1Data)
-			log.Println("Here is the parsed certificate")
-			log.Println(cert)
 			if err != nil {
 				panic("Failed to parse certificate from server: " + err.Error())
 			}
