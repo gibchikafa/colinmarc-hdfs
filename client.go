@@ -189,7 +189,7 @@ func NewClient(options ClientOptions) (*Client, error) {
 		rpc.NamenodeConnectionOptions{
 			Addresses:                    options.Addresses,
 			User:                         options.User,
-			DialFunc:                     dialFunction,
+			DialFunc:                     tlsDialFunction,
 			KerberosClient:               options.KerberosClient,
 			KerberosServicePrincipleName: options.KerberosServicePrincipleName,
 		},
@@ -372,7 +372,7 @@ func (c *Client) Close() error {
 	return c.namenode.Close()
 }
 
-func dialFunction(ctx context.Context, network, address string) (net.Conn, error) {
+func tlsDialFunction(ctx context.Context, network, address string) (net.Conn, error) {
 	caCert := os.Getenv("ROOT_CA_BUNDLE")
 	clientCertificate := os.Getenv("CLIENT_CERTIFICATES_BUNDLE")
 	clientKey := os.Getenv("CLIENT_KEY")
