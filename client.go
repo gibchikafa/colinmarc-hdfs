@@ -188,19 +188,17 @@ func NewClient(options ClientOptions) (*Client, error) {
 		return nil, errors.New("kerberos enabled, but kerberos namenode SPN is not provided")
 	}
 
-	/*dialFun := options.NamenodeDialFunc
+	dialFun := options.NamenodeDialFunc
 
 	if !options.NoTLS {
 		dialFun = tlsDialFunction
-	}*/
-
-	fmt.Printf("NoTLS is %t", options.NoTLS)
+	}
 
 	namenode, err := rpc.NewNamenodeConnection(
 		rpc.NamenodeConnectionOptions{
 			Addresses:                    options.Addresses,
 			User:                         options.User,
-			DialFunc:                     tlsDialFunction,
+			DialFunc:                     dialFun,
 			KerberosClient:               options.KerberosClient,
 			KerberosServicePrincipleName: options.KerberosServicePrincipleName,
 		},
