@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"io/ioutil"
@@ -96,6 +97,8 @@ type ClientOptions struct {
 	// has dfs.encrypt.data.transfer enabled, this setting is ignored and
 	// a level of "privacy" is used.
 	DataTransferProtection string
+
+	NoTLS bool
 }
 
 // ClientOptionsFromConf attempts to load any relevant configuration options
@@ -184,6 +187,14 @@ func NewClient(options ClientOptions) (*Client, error) {
 	if options.KerberosClient != nil && options.KerberosServicePrincipleName == "" {
 		return nil, errors.New("kerberos enabled, but kerberos namenode SPN is not provided")
 	}
+
+	/*dialFun := options.NamenodeDialFunc
+
+	if !options.NoTLS {
+		dialFun = tlsDialFunction
+	}*/
+
+	fmt.Printf("NoTLS is %t", options.NoTLS)
 
 	namenode, err := rpc.NewNamenodeConnection(
 		rpc.NamenodeConnectionOptions{
@@ -373,6 +384,7 @@ func (c *Client) Close() error {
 }
 
 func tlsDialFunction(ctx context.Context, network, address string) (net.Conn, error) {
+	//errors in these environmental variables will be handled when we will try to read the files
 	caCert := os.Getenv("ROOT_CA_BUNDLE")
 	clientCertificate := os.Getenv("CLIENT_CERTIFICATES_BUNDLE")
 	clientKey := os.Getenv("CLIENT_KEY")
